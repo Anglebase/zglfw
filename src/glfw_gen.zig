@@ -13,6 +13,7 @@ pub fn main() !void {
         \\//! This file generate by glfw_gen.zig
         \\
         \\const glfw = @cImport({
+        \\    @cDefine("GLFW_INCLUDE_NONE", {});
         \\    @cInclude("GLFW/glfw3.h");
         \\});
         \\
