@@ -12,8 +12,8 @@ zig fetch [lib-url] --save
 
 Available URLs include:
 
-- [https://codeberg.org/Anglebase/zglfw/archive/v0.1.0.tar.gz](https://codeberg.org/Anglebase/zglfw/archive/v0.1.0.tar.gz)
-- [https://codeberg.org/Anglebase/zglfw/archive/v0.1.0.zip](https://codeberg.org/Anglebase/zglfw/archive/v0.1.0.zip)
+- [https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.tar.gz](https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.tar.gz)
+- [https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.zip](https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.zip)
 
 as well as other possible mirror URLs.
 
