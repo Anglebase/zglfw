@@ -71,4 +71,31 @@ exe.addLibraryPath(b.path("path/to/glfw3dir"));
 exe.linkSystemLibrary("glfw3");
 ```
 
+## Using with glfw.zig
+
+[glfw.zig](https://github.com/tiawl/glfw.zig) is a GLFW version built with the Zig build system, making it easier to integrate with Zig's build system.
+You can add it to your project with the following command:
+
+```text
+zig fetch [url] --save
+```
+
+Available URLs include:
+
+- [https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.zip](https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.zip)
+- [https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.tar.gz](https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.tar.gz)
+
+as well as other possible mirror URLs. Since glfw.zig closely follows the latest GLFW releases, the URLs here may not be the most recent. You can find the latest glfw.zig URLs on the [glfw.zig tags page](https://github.com/tiawl/glfw.zig/tags).
+
+glfw.zig exports a binary library artifact named `glfw` that can be linked into your project's executable. You can link it into your project as follows:
+
+```zig
+const exe = b.addExecutable(.{
+    ...
+});
+
+const glfw_zig = b.dependency("glfw_zig", .{});
+exe.linkLibrary(glfw_zig.artifact("glfw"));
+```
+
 If you have questions or suggestions, feel free to open an Issue in the project repository.
