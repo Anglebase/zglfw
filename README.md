@@ -1,6 +1,6 @@
 # zglfw
 
-zglfw is a Zig-style wrapper for the GLFW library, offering Zig-idiomatic API naming and integrating Zig’s error handling mechanism.
+zglfw is a [GLFW](https://www.glfw.org/) wrapper written in Zig, providing a GLFW encapsulation with Zig coding style. This library does not offer platform-specific APIs from GLFW (functions from glfw3native.h).
 
 ## Usage
 
