@@ -35,26 +35,27 @@ After importing, you can use it like any regular module. Here’s a simple GLFW 
 const glfw = @import("zglfw");
 
 pub fn main() !void {
-    _ = glfw.init();
-    glfw.windowHint(glfw.CONTEXT_VERSION_MAJOR, 3);
-    glfw.windowHint(glfw.CONTEXT_VERSION_MINOR, 3);
-    glfw.windowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE);
+    try glfw.init();
+    defer glfw.deinit();
 
-    const window = glfw.createWindow(
+    var window = try glfw.Window.create(
         800,
         600,
-        "zGLFW",
-        null,
-        null,
+        "GLFW for zege",
+        .{
+            .context_version_major = 3,
+            .context_version_minor = 3,
+            .opengl_profile = .core,
+        },
     );
-    glfw.makeContextCurrent(window);
+    defer window.destroy();
 
-    while (glfw.windowShouldClose(window) == 0) {
-        glfw.swapBuffers(window);
-        glfw.pollEvents();
+    window.makeContextCurrent();
+
+    while (!window.shouldClose()) {
+        window.swapBuffer();
+        glfw.event.poll();
     }
-
-    glfw.terminate();
 }
 ```
 
@@ -77,7 +78,9 @@ zig fetch [url] --save
 
 You can obtain a valid `url` from the [Releases page](https://github.com/tiawl/glfw.zig/tags) of glfw.zig, or use other possible mirror URLs.
 
-glfw.zig exports a binary library artifact named `glfw` that can be linked into your project's executable. You can link it into your project as follows:
+glfw.zig exports a binary library artifact named `glfw` that can be linked into your project's executable.
+
+You can link it into your project as follows:
 
 ```zig
 const exe = b.addExecutable(.{
