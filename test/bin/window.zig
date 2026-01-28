@@ -1,7 +1,7 @@
 const glfw = @import("zglfw");
 
 pub fn main() !void {
-    try glfw.init();
+    try glfw.init(null, .{});
     defer glfw.deinit();
 
     var window = try glfw.Window.create(
