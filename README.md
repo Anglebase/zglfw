@@ -41,7 +41,7 @@ pub fn main() !void {
     var window = try glfw.Window.create(
         800,
         600,
-        "GLFW for zege",
+        "zglfw",
         .{
             .context_version_major = 3,
             .context_version_minor = 3,

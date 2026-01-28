@@ -10,6 +10,7 @@ pub fn build(b: *std.Build) !void {
 
     const names = [_][]const u8{
         "window",
+        "full_screen",
     };
     for (names) |name| {
         const exe = b.addExecutable(.{
