@@ -29,7 +29,7 @@ const mod = b.addModule("...", .{
 });
 ```
 
-After importing, you can use it like any regular module. Here’s a simple GLFW example:
+After importing, you can use it like any regular module. Here’s a simple zglfw example:
 
 ```zig
 const glfw = @import("zglfw");
@@ -78,9 +78,7 @@ zig fetch [url] --save
 
 You can obtain a valid `url` from the [Releases page](https://github.com/tiawl/glfw.zig/tags) of glfw.zig, or use other possible mirror URLs.
 
-glfw.zig exports a binary library artifact named `glfw` that can be linked into your project's executable.
-
-You can link it into your project as follows:
+glfw.zig exports a binary library artifact named `glfw`. You can link it into your project as follows:
 
 ```zig
 const exe = b.addExecutable(.{
