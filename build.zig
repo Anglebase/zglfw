@@ -27,5 +27,5 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-    zglfw.addIncludePath(b.path("include/"));
+    _ = zglfw;
 }
