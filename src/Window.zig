@@ -916,3 +916,32 @@ pub fn setCursorPos(self: *Window, x: f32, y: f32) void {
 pub fn setCursor(self: *Window, cursor: ?Cursor) void {
     glfw.setCursor(self.impl, if (cursor) |c| c.impl else null);
 }
+
+pub fn getCurrentContext() ?Window {
+    const window = glfw.getCurrentContext();
+    if (window == null) {
+        @branchHint(.cold);
+        glfw.check() catch unreachable;
+        return null;
+    }
+    const ptr = glfw.getWindowUserPointer(window);
+    if (ptr == null) {
+        return .{ .impl = window.?, .when = .{} };
+    }
+    return @as(*Window, @ptrCast(ptr.?)).*;
+}
+
+pub fn swapInterval(interval: u32) void {
+    glfw.swapInterval(@intCast(interval));
+}
+
+pub fn extensionSupported(extension: []const u8) error{ NoCurrentContext, InvalidValue }!bool {
+    const ret = glfw.extensionSupported(extension);
+    glfw.check() catch |err| switch (err) {
+        error.NoCurrentContext,
+        error.InvalidValue,
+        => return @errorCast(err),
+        else => unreachable,
+    };
+    return ret == glfw.TRUE;
+}

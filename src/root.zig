@@ -14,6 +14,8 @@ pub const Rectangle2 = struct { left: i32, top: i32, right: i32, bottom: i32 };
 pub const Size = struct { width: u32, height: u32 };
 pub const Scale = struct { x: f32, y: f32 };
 
+pub const getProcAddress = glfw.getProcAddress;
+
 pub fn init() error{PlatformUnavailable}!void {
     const ret = glfw.init();
     if (ret == glfw.FALSE) {
