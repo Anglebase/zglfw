@@ -6,6 +6,7 @@ pub const Monitor = @import("Monitor.zig");
 pub const input = @import("input.zig");
 pub const Image = @import("Image.zig");
 pub const Cursor = @import("Cursor.zig");
+const Allocator = std.mem.Allocator;
 
 pub const Pos = struct { x: i32, y: i32 };
 pub const f64Pos = struct { x: f64, y: f64 };
@@ -16,7 +17,70 @@ pub const Scale = struct { x: f32, y: f32 };
 
 pub const getProcAddress = glfw.getProcAddress;
 
-pub fn init() error{PlatformUnavailable}!void {
+pub const Platform2 = enum(c_int) {
+    any = glfw.ANY_PLATFORM,
+    win32 = glfw.PLATFORM_WIN32,
+    cocoa = glfw.PLATFORM_COCOA,
+    wayland = glfw.PLATFORM_WAYLAND,
+    x11 = glfw.PLATFORM_X11,
+    null = glfw.PLATFORM_NULL,
+};
+
+pub const AnglePlatformType = enum(c_int) {
+    none = glfw.ANGLE_PLATFORM_TYPE_NONE,
+    opengl = glfw.ANGLE_PLATFORM_TYPE_OPENGL,
+    opengles = glfw.ANGLE_PLATFORM_TYPE_OPENGLES,
+    d3d9 = glfw.ANGLE_PLATFORM_TYPE_D3D9,
+    d3d11 = glfw.ANGLE_PLATFORM_TYPE_D3D11,
+    vulkan = glfw.ANGLE_PLATFORM_TYPE_VULKAN,
+    metal = glfw.ANGLE_PLATFORM_TYPE_METAL,
+};
+
+pub const WaylandLibdecor = enum(c_int) {
+    prefer = glfw.WAYLAND_PREFER_LIBDECOR,
+    disable = glfw.WAYLAND_DISABLE_LIBDECOR,
+};
+
+pub const Hint = struct {
+    platform: ?Platform2 = null,
+    joystick_hat_buttons: ?bool = null,
+    angle_platform_type: ?AnglePlatformType = null,
+    cocoa_chdir_resources: ?bool = null,
+    cocoa_menubar: ?bool = null,
+    wayland_libdecor: ?WaylandLibdecor = null,
+    x11_xcb_vulkan_surface: ?bool = null,
+};
+
+inline fn b(v: bool) @TypeOf(glfw.TRUE) {
+    return if (v) glfw.TRUE else glfw.FALSE;
+}
+
+fn inithint(hint: Hint) void {
+    if (hint.platform) |platform| {
+        glfw.initHint(glfw.PLATFORM, @intFromEnum(platform));
+    }
+    if (hint.joystick_hat_buttons) |joystick_hat_buttons| {
+        glfw.initHint(glfw.JOYSTICK_HAT_BUTTONS, b(joystick_hat_buttons));
+    }
+    if (hint.angle_platform_type) |angle_platform_type| {
+        glfw.initHint(glfw.ANGLE_PLATFORM_TYPE, @intFromEnum(angle_platform_type));
+    }
+    if (hint.cocoa_chdir_resources) |cocoa_chdir_resources| {
+        glfw.initHint(glfw.COCOA_CHDIR_RESOURCES, b(cocoa_chdir_resources));
+    }
+    if (hint.cocoa_menubar) |cocoa_menubar| {
+        glfw.initHint(glfw.COCOA_MENUBAR, b(cocoa_menubar));
+    }
+    if (hint.wayland_libdecor) |wayland_libdecor| {
+        glfw.initHint(glfw.WAYLAND_LIBDECOR, @intFromEnum(wayland_libdecor));
+    }
+    if (hint.x11_xcb_vulkan_surface) |x11_xcb_vulkan_surface| {
+        glfw.initHint(glfw.X11_XCB_VULKAN_SURFACE, b(x11_xcb_vulkan_surface));
+    }
+}
+
+pub fn init(_: ?Allocator, hint: Hint) error{PlatformUnavailable}!void {
+    inithint(hint);
     const ret = glfw.init();
     if (ret == glfw.FALSE) {
         @branchHint(.cold);
