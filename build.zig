@@ -5,7 +5,7 @@ pub fn build(b: *std.Build) !void {
     const optimize = b.standardOptimizeOption(.{});
 
     const mod = b.createModule(.{
-        .root_source_file = b.path("src/glfw_gen.zig"),
+        .root_source_file = b.path("bin/glfw_gen.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -18,7 +18,7 @@ pub fn build(b: *std.Build) !void {
     gen.linkLibC();
 
     const run_gen = b.addRunArtifact(gen);
-    const step = b.step("run", "Generator GLFW Warpper");
+    const step = b.step("gen", "Generator GLFW Warpper");
     step.dependOn(&run_gen.step);
 
     const glfw = b.addModule("zglfw", .{

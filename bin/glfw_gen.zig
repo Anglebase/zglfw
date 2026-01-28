@@ -10,14 +10,31 @@ pub fn main() !void {
     defer file.close();
 
     _ = try file.write(
-        \\//! This file generate by glfw_gen.zig
+        \\//! This file generate by bin/glfw_gen.zig
         \\
         \\const glfw = @cImport({
         \\    @cDefine("GLFW_INCLUDE_NONE", {});
         \\    @cInclude("GLFW/glfw3.h");
         \\});
         \\
-        \\pub fn check() !void {
+        \\pub const Error = error{
+        \\    NotInitialized,
+        \\    NoCurrentContext,
+        \\    InvalidEnum,
+        \\    InvalidValue,
+        \\    OutOfMemory,
+        \\    ApiUnavailable,
+        \\    VersionUnavailable,
+        \\    PlatformError,
+        \\    FormatUnavailable,
+        \\    NoWindowContext,
+        \\    CursorUnavailable,
+        \\    FeatureUnavailable,
+        \\    FeatureUnimplemented,
+        \\    PlatformUnavailable,
+        \\};
+        \\
+        \\pub fn check() Error!void {
         \\    switch (getError(null)) {
         \\        NO_ERROR => return,
         \\        NOT_INITIALIZED => return error.NotInitialized,

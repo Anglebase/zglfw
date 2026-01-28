@@ -10,12 +10,7 @@ In your project directory, run the following command to add zglfw as a dependenc
 zig fetch [lib-url] --save
 ```
 
-Available URLs include:
-
-- [https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.tar.gz](https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.tar.gz)
-- [https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.zip](https://codeberg.org/Anglebase/zglfw/archive/v0.1.1.zip)
-
-as well as other possible mirror URLs.
+You can obtain a valid `lib-url` from the [Releases page](https://codeberg.org/Anglebase/zglfw/releases), or use any available mirror URL.
 
 Then, include the dependency in your build script:
 
@@ -80,12 +75,7 @@ You can add it to your project with the following command:
 zig fetch [url] --save
 ```
 
-Available URLs include:
-
-- [https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.zip](https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.zip)
-- [https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.tar.gz](https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.tar.gz)
-
-as well as other possible mirror URLs. Since glfw.zig closely follows the latest GLFW releases, the URLs here may not be the most recent. You can find the latest glfw.zig URLs on the [glfw.zig tags page](https://github.com/tiawl/glfw.zig/tags).
+You can obtain a valid `url` from the [Releases page](https://github.com/tiawl/glfw.zig/tags) of glfw.zig, or use other possible mirror URLs.
 
 glfw.zig exports a binary library artifact named `glfw` that can be linked into your project's executable. You can link it into your project as follows:
 
