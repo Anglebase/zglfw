@@ -1,0 +1,20 @@
+.{
+    .name = .window,
+    .version = "0.0.0",
+    .fingerprint = 0x8be4f9ddae294ff4,
+    .minimum_zig_version = "0.15.2",
+    .dependencies = .{
+        .zglfw = .{
+            .path = "../",
+        },
+        .glfw_zig = .{
+            .url = "https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.tar.gz",
+            .hash = "glfw_zig-1.0.0-NrvYo-PXGQBHXHdzK3udR329ezIrC4k8Di1R3wWt7GjS",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
