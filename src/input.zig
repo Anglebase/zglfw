@@ -305,7 +305,7 @@ pub const Gamepad = struct {
             if (ret == glfw.FALSE) {
                 glfw.check() catch |err| switch (err) {
                     error.InvalidValue,
-                    => return err,
+                    => return @errorCast(err),
                     else => unreachable,
                 };
                 try glfw.check();
@@ -404,7 +404,7 @@ pub fn getKeyName(key: Key2) error{InvalidValue}!?[]const u8 {
     if (name == null) {
         @branchHint(.cold);
         glfw.check() catch |err| switch (err) {
-            error.InvalidValue => return err,
+            error.InvalidValue => return @errorCast(err),
             else => unreachable,
         };
         return null;

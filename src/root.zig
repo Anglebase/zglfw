@@ -19,7 +19,7 @@ pub fn init() error{PlatformUnavailable}!void {
     if (ret == glfw.FALSE) {
         @branchHint(.cold);
         glfw.check() catch |err| switch (err) {
-            error.PlatformUnavailable => return err,
+            error.PlatformUnavailable => return @errorCast(err),
             else => unreachable,
         };
     }
@@ -59,7 +59,7 @@ pub fn getClipborad() error{FormatUnavailable}!?[]const u8 {
             error.FormatUnavailable,
             error.NotInitialized,
             error.PlatformError,
-            => return err,
+            => return @errorCast(err),
             else => unreachable,
         };
         return null;
@@ -74,7 +74,7 @@ pub inline fn getTime() f64 {
 pub fn setTime(time: f64) error{InvalidValue}!void {
     glfw.setTime(time);
     glfw.check() catch |err| switch (err) {
-        error.InvalidValue => return err,
+        error.InvalidValue => return @errorCast(err),
         else => unreachable,
     };
 }

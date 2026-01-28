@@ -342,7 +342,7 @@ pub fn create(width: u32, height: u32, title: []const u8, hint: Hint) WindowErro
             error.VersionUnavailable,
             error.FormatUnavailable,
             error.NoWindowContext,
-            => return err,
+            => return @errorCast(err),
             else => unreachable,
         };
         unreachable;
@@ -422,7 +422,7 @@ pub fn getPos(self: *Window) error{FeatureUnavailable}!Pos {
         @branchHint(.cold);
         glfw.check() catch |err| switch (err) {
             error.FeatureUnavailable,
-            => return err,
+            => return @errorCast(err),
             else => unreachable,
         };
     }
@@ -864,7 +864,7 @@ pub fn setIcon(self: *Window, allocator: Allocator, images: []Image) error{
     glfw.check() catch |err| switch (err) {
         error.InvalidValue,
         error.FeatureUnavailable,
-        => return err,
+        => return @errorCast(err),
         else => unreachable,
     };
     glfw.setWindowIcon(self.impl, glfw_images.len, @ptrCast(glfw_images));
@@ -902,7 +902,7 @@ pub fn getCursorPos(self: *Window) error{}!fPos {
     glfw.getCursorPos(self.impl, &x, &y);
     if (x == 0 and y == 0) {
         glfw.check() catch |err| switch (err) {
-            error.PlatformError => return err,
+            error.PlatformError => return @errorCast(err),
             else => unreachable,
         };
     }

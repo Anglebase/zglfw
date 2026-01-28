@@ -1,5 +1,4 @@
 const glfw = @import("zglfw");
-const std = @import("std");
 
 pub fn main() !void {
     try glfw.init();

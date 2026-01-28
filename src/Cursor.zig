@@ -18,7 +18,7 @@ pub fn create(image: *const Image, xhot: i32, yhot: i32) error{InvalidValue}!Cur
     if (cursor == null) {
         @branchHint(.cold);
         glfw.check() catch |err| switch (err) {
-            error.InvalidValue => return err,
+            error.InvalidValue => return @errorCast(err),
             else => unreachable,
         };
         unreachable;
@@ -47,7 +47,7 @@ pub fn createStandrad(cursor: StandrandCursor) error{CursorUnavailable}!Cursor {
     if (cur == null) {
         @branchHint(.cold);
         glfw.check() catch |err| switch (err) {
-            error.CursorUnavailable => return err,
+            error.CursorUnavailable => return @errorCast(err),
             else => unreachable,
         };
         unreachable;
