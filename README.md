@@ -1,6 +1,6 @@
 # zglfw
 
-zglfw is a [GLFW](https://www.glfw.org/) wrapper written in Zig, providing a GLFW encapsulation with Zig coding style. This library does not offer platform-specific APIs from GLFW (functions from glfw3native.h).
+zglfw is a [GLFW](https://www.glfw.org/) wrapper written in Zig, providing a GLFW encapsulation with Zig coding style. This library does not include the platform-specific APIs from GLFW (glfw3native.h) and support for Vulkan. These may be added in the future.
 
 ## Usage
 
@@ -58,7 +58,7 @@ pub fn main() !void {
 }
 ```
 
-zglfw does not include the actual GLFW function implementations; it only provides the interface to interact with GLFW3. Therefore, you still need to download the corresponding version of the GLFW library (GLFW3) from the [GLFW official website](https://www.glfw.org/download.html) or elsewhere, and link it to your project:
+zglfw does not assume how you link GLFW, you can freely choose static linking or dynamic linking. zglfw itself does not include the implementation of the GLFW library. You can download the GLFW runtime from the [GLFW official download page](https://www.glfw.org/download.html) or elsewhere, and link them into your project:
 
 ```zig
 const exe = b.addExecutable(...);
