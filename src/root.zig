@@ -173,3 +173,18 @@ pub fn getPlatform() Platform {
 pub fn getPlatformSupport(platform: Platform) bool {
     return glfw.platformSupported(@intFromEnum(platform)) == glfw.TRUE;
 }
+
+pub fn swapInterval(interval: u32) void {
+    glfw.swapInterval(@intCast(interval));
+}
+
+pub fn extensionSupported(extension: []const u8) error{ NoCurrentContext, InvalidValue }!bool {
+    const ret = glfw.extensionSupported(extension);
+    glfw.check() catch |err| switch (err) {
+        error.NoCurrentContext,
+        error.InvalidValue,
+        => return @errorCast(err),
+        else => unreachable,
+    };
+    return ret == glfw.TRUE;
+}

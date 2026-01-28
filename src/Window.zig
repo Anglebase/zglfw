@@ -362,7 +362,7 @@ pub fn makeContextCurrent(self: *Window) void {
     glfw.makeContextCurrent(self.impl);
 }
 
-pub fn shouldClose(self: *Window) bool {
+pub fn shouldClose(self: *const Window) bool {
     return glfw.windowShouldClose(self.impl) == glfw.TRUE;
 }
 
@@ -370,7 +370,7 @@ pub fn setShouldClose(self: *Window, value: bool) void {
     glfw.setWindowShouldClose(self.impl, b(value));
 }
 
-pub fn getTitle(self: *Window) []const u8 {
+pub fn getTitle(self: *const Window) []const u8 {
     const title = glfw.getWindowTitle(self.impl);
     if (title == null) {
         @branchHint(.cold);
@@ -414,7 +414,7 @@ pub fn requestAttention(self: *Window) void {
 
 const Pos = types.Pos;
 
-pub fn getPos(self: *Window) error{FeatureUnavailable}!Pos {
+pub fn getPos(self: *const Window) error{FeatureUnavailable}!Pos {
     var x: c_int = undefined;
     var y: c_int = undefined;
     glfw.getWindowPos(self.impl, &x, &y);
@@ -435,7 +435,7 @@ pub fn setPos(self: *Window, x: i32, y: i32) void {
 
 const Size = types.Size;
 
-pub fn getSize(self: *Window) Size {
+pub fn getSize(self: *const Window) Size {
     var width: c_int = undefined;
     var height: c_int = undefined;
     glfw.getWindowSize(self.impl, &width, &height);
@@ -471,7 +471,7 @@ pub fn setAspectRatio(self: *Window, numer: ?u32, denom: ?u32) void {
     );
 }
 
-pub fn getFrameBufferSize(self: *Window) Size {
+pub fn getFrameBufferSize(self: *const Window) Size {
     var width: c_int = undefined;
     var height: c_int = undefined;
     glfw.getFramebufferSize(self.impl, &width, &height);
@@ -485,7 +485,7 @@ pub fn getFrameBufferSize(self: *Window) Size {
     };
 }
 
-pub fn getFrameSize(self: *Window) Rectangle {
+pub fn getFrameSize(self: *const Window) Rectangle {
     var left: c_int = undefined;
     var top: c_int = undefined;
     var right: c_int = undefined;
@@ -503,7 +503,7 @@ pub fn getFrameSize(self: *Window) Rectangle {
     };
 }
 
-pub fn getOpacity(self: *Window) f32 {
+pub fn getOpacity(self: *const Window) f32 {
     return glfw.getWindowOpacity(self.impl);
 }
 
@@ -511,7 +511,7 @@ pub fn setOpacity(self: *Window, opacity: f32) void {
     glfw.setWindowOpacity(self.impl, opacity);
 }
 
-pub fn getMonitor(self: *Window) ?Monitor {
+pub fn getMonitor(self: *const Window) ?Monitor {
     const monitor = glfw.getWindowMonitor(self.impl);
     if (monitor == null) {
         @branchHint(.cold);
@@ -616,7 +616,7 @@ inline fn attr(attrib: Attrib) c_int {
     };
 }
 
-pub fn getAttrib(self: *Window, attrib: Attrib) AttribData {
+pub fn getAttrib(self: *const Window, attrib: Attrib) AttribData {
     const data = glfw.getWindowAttrib(self.impl, attr(attrib));
     switch (data) {
         glfw.FOCUSED => |d| return .{ .focused = d == glfw.TRUE },
@@ -870,7 +870,7 @@ pub fn setIcon(self: *Window, allocator: Allocator, images: []Image) error{
     glfw.setWindowIcon(self.impl, glfw_images.len, @ptrCast(glfw_images));
 }
 
-pub fn getInputMode(self: *Window, mode: ModeType) Mode {
+pub fn getInputMode(self: *const Window, mode: ModeType) Mode {
     const glfw_mode = glfw.getInputMode(self.impl, @intFromEnum(mode));
     switch (glfw_mode) {
         .cursor => return @enumFromInt(glfw_mode),
@@ -886,17 +886,17 @@ pub fn setInputMode(self: *Window, mode: Mode) void {
     glfw.setInputMode(self.impl, @intFromEnum(mode), value);
 }
 
-pub fn getKey(self: *Window, key: Key) State {
+pub fn getKey(self: *const Window, key: Key) State {
     return @enumFromInt(glfw.getKey(self.impl, @intFromEnum(key)));
 }
 
-pub fn getMouseButton(self: *Window, button: Button) State {
+pub fn getMouseButton(self: *const Window, button: Button) State {
     return @enumFromInt(glfw.getMouseButton(self.impl, @intFromEnum(button)));
 }
 
 const fPos = types.f64Pos;
 
-pub fn getCursorPos(self: *Window) error{}!fPos {
+pub fn getCursorPos(self: *const Window) error{}!fPos {
     var x: f64 = undefined;
     var y: f64 = undefined;
     glfw.getCursorPos(self.impl, &x, &y);
@@ -931,17 +931,3 @@ pub fn getCurrentContext() ?Window {
     return @as(*Window, @ptrCast(ptr.?)).*;
 }
 
-pub fn swapInterval(interval: u32) void {
-    glfw.swapInterval(@intCast(interval));
-}
-
-pub fn extensionSupported(extension: []const u8) error{ NoCurrentContext, InvalidValue }!bool {
-    const ret = glfw.extensionSupported(extension);
-    glfw.check() catch |err| switch (err) {
-        error.NoCurrentContext,
-        error.InvalidValue,
-        => return @errorCast(err),
-        else => unreachable,
-    };
-    return ret == glfw.TRUE;
-}
