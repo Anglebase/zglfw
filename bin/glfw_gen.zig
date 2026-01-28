@@ -1,5 +1,6 @@
 const std = @import("std");
 const glfw = @cImport({
+    @cDefine("GLFW_INCLUDE_NONE", {});
     @cInclude("GLFW/glfw3.h");
 });
 

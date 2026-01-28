@@ -197,6 +197,7 @@ pub const extensionSupported: *const @TypeOf(glfw.glfwExtensionSupported) = &glf
 pub const getProcAddress: *const @TypeOf(glfw.glfwGetProcAddress) = &glfw.glfwGetProcAddress;
 pub const vulkanSupported: *const @TypeOf(glfw.glfwVulkanSupported) = &glfw.glfwVulkanSupported;
 pub const getRequiredInstanceExtensions: *const @TypeOf(glfw.glfwGetRequiredInstanceExtensions) = &glfw.glfwGetRequiredInstanceExtensions;
+pub const INCLUDE_NONE = @as(c_int, glfw.GLFW_INCLUDE_NONE);
 pub const APIENTRY_DEFINED = @as(c_int, glfw.GLFW_APIENTRY_DEFINED);
 pub const WINGDIAPI_DEFINED = @as(c_int, glfw.GLFW_WINGDIAPI_DEFINED);
 pub const CALLBACK_DEFINED = @as(c_int, glfw.GLFW_CALLBACK_DEFINED);
