@@ -13,20 +13,14 @@ pub fn main() !void {
     _ = try file.write(
         \\//! This file generate by bin/glfw_gen.zig
         \\
-        \\const glfw = @cImport({
-        \\    @cDefine("GLFW_INCLUDE_NONE", {});
-        \\    @cInclude("GLFW/glfw3.h");
-        \\});
+        \\const glfw = @import("glfw3.zig");
         \\
         \\pub const Error = error{
-        \\    NotInitialized,
         \\    NoCurrentContext,
-        \\    InvalidEnum,
         \\    InvalidValue,
         \\    OutOfMemory,
         \\    ApiUnavailable,
         \\    VersionUnavailable,
-        \\    PlatformError,
         \\    FormatUnavailable,
         \\    NoWindowContext,
         \\    CursorUnavailable,
@@ -38,14 +32,14 @@ pub fn main() !void {
         \\pub fn check() Error!void {
         \\    switch (getError(null)) {
         \\        NO_ERROR => return,
-        \\        NOT_INITIALIZED => return error.NotInitialized,
+        \\        NOT_INITIALIZED => @panic("GLFW Not Initialized."), // Call glfw.init()
         \\        NO_CURRENT_CONTEXT => return error.NoCurrentContext,
-        \\        INVALID_ENUM => return error.InvalidEnum,
+        \\        INVALID_ENUM => @panic("Implementation error."),  // Library implementation error, please provide feedback to issue
         \\        INVALID_VALUE => return error.InvalidValue,
         \\        OUT_OF_MEMORY => return error.OutOfMemory,
         \\        API_UNAVAILABLE => return error.ApiUnavailable,
         \\        VERSION_UNAVAILABLE => return error.VersionUnavailable,
-        \\        PLATFORM_ERROR => return error.PlatformError,
+        \\        PLATFORM_ERROR => @panic("Platform-specific error"),
         \\        FORMAT_UNAVAILABLE => return error.FormatUnavailable,
         \\        NO_WINDOW_CONTEXT => return error.NoWindowContext,
         \\        CURSOR_UNAVAILABLE => return error.CursorUnavailable,

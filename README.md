@@ -1,6 +1,6 @@
 # zglfw
 
-zglfw is a [GLFW](https://www.glfw.org/) wrapper written in Zig, providing a GLFW encapsulation with Zig coding style. This library does not offer platform-specific APIs from GLFW (functions from glfw3native.h).
+zglfw is a [GLFW](https://www.glfw.org/) wrapper written in Zig, providing a GLFW encapsulation with Zig coding style. This library does not include the platform-specific APIs from GLFW (glfw3native.h) and support for Vulkan. These may be added in the future.
 
 ## Usage
 
@@ -10,7 +10,7 @@ In your project directory, run the following command to add zglfw as a dependenc
 zig fetch [lib-url] --save
 ```
 
-You can obtain a valid `lib-url` from the [Releases page](https://codeberg.org/Anglebase/zglfw/releases), or use any available mirror URL.
+You can obtain a valid `lib-url` from the [Releases page](https://github.com/Anglebase/zglfw/releases), or use any available mirror URL.
 
 Then, include the dependency in your build script:
 
@@ -29,36 +29,37 @@ const mod = b.addModule("...", .{
 });
 ```
 
-After importing, you can use it like any regular module. Here’s a simple GLFW example:
+After importing, you can use it like any regular module. Here’s a simple zglfw example:
 
 ```zig
 const glfw = @import("zglfw");
 
 pub fn main() !void {
-    _ = glfw.init();
-    glfw.windowHint(glfw.CONTEXT_VERSION_MAJOR, 3);
-    glfw.windowHint(glfw.CONTEXT_VERSION_MINOR, 3);
-    glfw.windowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE);
+    try glfw.init(null, .{});
+    defer glfw.deinit();
 
-    const window = glfw.createWindow(
+    var window = try glfw.Window.create(
         800,
         600,
-        "zGLFW",
-        null,
-        null,
+        "zglfw",
+        .{
+            .context_version_major = 3,
+            .context_version_minor = 3,
+            .opengl_profile = .core,
+        },
     );
-    glfw.makeContextCurrent(window);
+    defer window.destroy();
 
-    while (glfw.windowShouldClose(window) == 0) {
-        glfw.swapBuffers(window);
-        glfw.pollEvents();
+    window.makeContextCurrent();
+
+    while (!window.shouldClose()) {
+        window.swapBuffer();
+        glfw.event.poll();
     }
-
-    glfw.terminate();
 }
 ```
 
-zglfw does not include the actual GLFW function implementations; it only provides the interface to interact with GLFW3. Therefore, you still need to download the corresponding version of the GLFW library (GLFW3) from the [GLFW official website](https://www.glfw.org/download.html) or elsewhere, and link it to your project:
+zglfw does not assume how you link GLFW, you can freely choose static linking or dynamic linking. zglfw itself does not include the implementation of the GLFW library. You can download the GLFW runtime from the [GLFW official download page](https://www.glfw.org/download.html) or elsewhere, and link them into your project:
 
 ```zig
 const exe = b.addExecutable(...);
@@ -77,7 +78,7 @@ zig fetch [url] --save
 
 You can obtain a valid `url` from the [Releases page](https://github.com/tiawl/glfw.zig/tags) of glfw.zig, or use other possible mirror URLs.
 
-glfw.zig exports a binary library artifact named `glfw` that can be linked into your project's executable. You can link it into your project as follows:
+glfw.zig exports a binary library artifact named `glfw`. You can link it into your project as follows:
 
 ```zig
 const exe = b.addExecutable(.{
