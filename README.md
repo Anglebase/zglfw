@@ -10,7 +10,7 @@ In your project directory, run the following command to add zglfw as a dependenc
 zig fetch [lib-url] --save
 ```
 
-You can obtain a valid `lib-url` from the [Releases page](https://codeberg.org/Anglebase/zglfw/releases), or use any available mirror URL.
+You can obtain a valid `lib-url` from the [Releases page](https://github.com/Anglebase/zglfw/releases), or use any available mirror URL.
 
 Then, include the dependency in your build script:
 
