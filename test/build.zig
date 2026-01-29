@@ -93,4 +93,26 @@ pub fn build(b: *std.Build) !void {
     const run_opengl = b.addRunArtifact(exe_opengl);
     step_opengl.dependOn(&run_opengl.step);
     run_opengl.step.dependOn(b.getInstallStep());
+
+    // cursor.zig
+    const exe_cursor = b.addExecutable(.{
+        .name = "cursor",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("bin/cursor.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{
+                .{ .name = "zglfw", .module = zglfw.module("zglfw") },
+                .{ .name = "zgl", .module = zgl.module("zgl") },
+            },
+        }),
+    });
+    exe_cursor.linkLibC();
+    exe_cursor.linkLibrary(glfw_zig.artifact("glfw"));
+    b.installArtifact(exe_cursor);
+
+    const step_cursor = b.step("cursor", "Run test file: cursor.zig");
+    const run_cursor = b.addRunArtifact(exe_cursor);
+    step_cursor.dependOn(&run_cursor.step);
+    run_cursor.step.dependOn(b.getInstallStep());
 }
