@@ -79,13 +79,66 @@ fn inithint(hint: Hint) void {
     }
 }
 
-pub fn init(_: ?Allocator, hint: Hint) error{PlatformUnavailable}!void {
+fn allocate(size: usize, user: ?*anyopaque) callconv(.c) ?*anyopaque {
+    const allocator: *Allocator = @ptrCast(@alignCast(user.?));
+    const ptr = allocator.alloc(
+        u8,
+        size + @sizeOf(usize),
+    ) catch |err| switch (err) {
+        error.OutOfMemory => return null,
+    };
+    const len: *usize = @ptrCast(@alignCast(ptr));
+    len.* = size;
+    return @ptrCast(@as([*]u8, @ptrCast(ptr)) + @sizeOf(usize));
+}
+
+fn reallocate(block: ?*anyopaque, size: usize, user: ?*anyopaque) callconv(.c) ?*anyopaque {
+    const allocator: *Allocator = @ptrCast(@alignCast(user.?));
+    const bptr: [*]u8 = @ptrCast(block orelse return null);
+    const ptr = bptr - @sizeOf(usize);
+    const len: *usize = @ptrCast(@alignCast(ptr));
+    const nptr: []u8 = allocator.realloc(
+        @as([]u8, @ptrCast(ptr[0..(len.* + @sizeOf(usize))])),
+        size + @sizeOf(usize),
+    ) catch |err| switch (err) {
+        error.OutOfMemory => {
+            return null;
+        },
+    };
+    const nlen: *usize = @ptrCast(@alignCast(nptr));
+    nlen.* = size;
+    return @ptrCast(@as([*]u8, @ptrCast(nptr)) + @sizeOf(usize));
+}
+
+fn deallocate(block: ?*anyopaque, user: ?*anyopaque) callconv(.c) void {
+    const allocator: *Allocator = @ptrCast(@alignCast(user.?));
+    const bptr: [*]u8 = @ptrCast(block orelse return);
+    const ptr = bptr - @sizeOf(usize);
+    const len: *usize = @ptrCast(@alignCast(ptr));
+    allocator.free(ptr[0..(len.* + @sizeOf(usize))]);
+}
+
+var custom_allocator: Allocator = undefined;
+
+pub fn init(allocator: ?Allocator, hint: Hint) error{ PlatformUnavailable, InvalidValue }!void {
     inithint(hint);
+    if (allocator) |alloc| {
+        custom_allocator = alloc;
+        const glfw_alloc = glfw.Allocator{
+            .allocate = &allocate,
+            .deallocate = &deallocate,
+            .reallocate = &reallocate,
+            .user = &custom_allocator,
+        };
+        glfw.initAllocator(&glfw_alloc);
+    }
     const ret = glfw.init();
     if (ret == glfw.FALSE) {
         @branchHint(.cold);
         glfw.check() catch |err| switch (err) {
-            error.PlatformUnavailable => return @errorCast(err),
+            error.PlatformUnavailable,
+            error.InvalidValue,
+            => return @errorCast(err),
             else => unreachable,
         };
     }
