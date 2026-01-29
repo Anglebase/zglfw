@@ -6,6 +6,7 @@ pub fn build(b: *std.Build) !void {
 
     // 3rd-party
     const zglfw = b.dependency("zglfw", .{});
+    const zgl = b.dependency("zgl", .{});
     const glfw_zig = b.dependency("glfw_zig", .{});
 
     // window.zig
@@ -70,4 +71,26 @@ pub fn build(b: *std.Build) !void {
     const run_custom_allocator = b.addRunArtifact(exe_custom_allocator);
     step_custom_allocator.dependOn(&run_custom_allocator.step);
     run_custom_allocator.step.dependOn(b.getInstallStep());
+
+    // opengl.zig
+    const exe_opengl = b.addExecutable(.{
+        .name = "opengl",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("bin/opengl.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{
+                .{ .name = "zglfw", .module = zglfw.module("zglfw") },
+                .{ .name = "zgl", .module = zgl.module("zgl") },
+            },
+        }),
+    });
+    exe_opengl.linkLibC();
+    exe_opengl.linkLibrary(glfw_zig.artifact("glfw"));
+    b.installArtifact(exe_opengl);
+
+    const step_opengl = b.step("opengl", "Run test file: opengl.zig");
+    const run_opengl = b.addRunArtifact(exe_opengl);
+    step_opengl.dependOn(&run_opengl.step);
+    run_opengl.step.dependOn(b.getInstallStep());
 }

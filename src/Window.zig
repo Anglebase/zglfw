@@ -684,7 +684,7 @@ pub const Callbacks = struct {
     pos: ?*const fn (i32, i32) void = null,
     size: ?*const fn (i32, i32) void = null,
     close: ?*const fn () void = null,
-    refresh: ?*const fn (bool) void = null,
+    refresh: ?*const fn () void = null,
     focus: ?*const fn (bool) void = null,
     iconify: ?*const fn (bool) void = null,
     maximize: ?*const fn (bool) void = null,
@@ -723,8 +723,8 @@ pub fn enable_callback(self: *Window) void {
     _ = glfw.setDropCallback(self.impl, &when_drop);
 }
 
-fn when_key(this: *glfw.Window, key: c_int, scancode: c_int, action: c_int, mods: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_key(this: ?*glfw.Window, key: c_int, scancode: c_int, action: c_int, mods: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.key) |f| {
         f(
             @enumFromInt(key),
@@ -734,20 +734,20 @@ fn when_key(this: *glfw.Window, key: c_int, scancode: c_int, action: c_int, mods
         );
     }
 }
-fn when_char(this: *glfw.Window, char: c_uint) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_char(this: ?*glfw.Window, char: c_uint) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.char) |f| {
         f(@intCast(char));
     }
 }
-fn when_char_mods(this: *glfw.Window, char: c_uint, mods: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_char_mods(this: ?*glfw.Window, char: c_uint, mods: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.char_mods) |f| {
         f(@intCast(char), @bitCast(@as(u6, @intCast(mods))));
     }
 }
-fn when_mouse_button(this: *glfw.Window, button: c_int, action: c_int, mods: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_mouse_button(this: ?*glfw.Window, button: c_int, action: c_int, mods: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.mouse_button) |f| {
         f(
             @enumFromInt(button),
@@ -756,93 +756,93 @@ fn when_mouse_button(this: *glfw.Window, button: c_int, action: c_int, mods: c_i
         );
     }
 }
-fn when_cursor_pos(this: *glfw.Window, x: f64, y: f64) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_cursor_pos(this: ?*glfw.Window, x: f64, y: f64) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.cursor_pos) |f| {
         f(x, y);
     }
 }
-fn when_cursor_enter(this: *glfw.Window, a: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_cursor_enter(this: ?*glfw.Window, a: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.cursor_enter) |f| {
         f(a == glfw.TRUE);
     }
 }
-fn when_scroll(this: *glfw.Window, xs: f64, ys: f64) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_scroll(this: ?*glfw.Window, xs: f64, ys: f64) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.scroll) |f| {
         f(xs, ys);
     }
 }
-fn when_drop(this: *glfw.Window, count: c_int, path: [*c][*c]const u8) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_drop(this: ?*glfw.Window, count: c_int, path: [*c][*c]const u8) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.drop) |f| {
         if (count == 0) {
             f(&.{});
         } else {
-            f(@ptrCast(path[0..(count - 1)]));
+            f(@ptrCast(path[0..@intCast(count - 1)]));
         }
     }
 }
 
-fn when_pos(this: *glfw.Window, x: c_int, y: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_pos(this: ?*glfw.Window, x: c_int, y: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.pos) |f| {
         f(x, y);
     }
 }
 
-fn when_size(this: *glfw.Window, width: c_int, height: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_size(this: ?*glfw.Window, width: c_int, height: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.size) |f| {
         f(width, height);
     }
 }
 
-fn when_close(this: *glfw.Window) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_close(this: ?*glfw.Window) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.close) |f| {
         f();
     }
 }
 
-fn when_refresh(this: *glfw.Window, r: bool) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_refresh(this: ?*glfw.Window) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.refresh) |f| {
-        f(r);
+        f();
     }
 }
 
-fn when_focus(this: *glfw.Window, f: bool) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_focus(this: ?*glfw.Window, f: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.focus) |func| {
-        func(f);
+        func(f == glfw.TRUE);
     }
 }
 
-fn when_iconify(this: *glfw.Window, i: bool) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_iconify(this: ?*glfw.Window, i: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.iconify) |f| {
-        f(i);
+        f(i == glfw.TRUE);
     }
 }
 
-fn when_maximize(this: *glfw.Window, m: bool) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_maximize(this: ?*glfw.Window, m: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.maximize) |f| {
-        f(m);
+        f(m == glfw.TRUE);
     }
 }
 
-fn when_frame_buffer_size(this: *glfw.Window, width: c_int, height: c_int) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_frame_buffer_size(this: ?*glfw.Window, width: c_int, height: c_int) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.frame_buffer_size) |f| {
         f(width, height);
     }
 }
 
-fn when_content_sacle(this: *glfw.Window, xs: f32, ys: f32) callconv(.c) void {
-    const self: *Window = @ptrCast(glfw.getWindowUserPointer(this));
+fn when_content_sacle(this: ?*glfw.Window, xs: f32, ys: f32) callconv(.c) void {
+    const self: *Window = @ptrCast(@alignCast(glfw.getWindowUserPointer(this)));
     if (self.when.content_sacle) |f| {
         f(xs, ys);
     }
@@ -930,4 +930,3 @@ pub fn getCurrentContext() ?Window {
     }
     return @as(*Window, @ptrCast(ptr.?)).*;
 }
-

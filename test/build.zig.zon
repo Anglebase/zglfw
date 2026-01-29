@@ -11,6 +11,10 @@
             .url = "https://github.com/tiawl/glfw.zig/archive/refs/tags/X11.zig-libXrandr-1.5.5.tar.gz",
             .hash = "glfw_zig-1.0.0-NrvYo-PXGQBHXHdzK3udR329ezIrC4k8Di1R3wWt7GjS",
         },
+        .zgl = .{
+            .url = "https://codeberg.org/Anglebase/zgl/archive/v0.1.2.tar.gz",
+            .hash = "zgl-0.1.2-hC6zBFhKJQAaz1VX5YUcgavFwjjmz5Hc_ux-iAQTjxZU",
+        },
     },
     .paths = .{
         "build.zig",
