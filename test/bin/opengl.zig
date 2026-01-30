@@ -2,8 +2,13 @@ const glfw = @import("zglfw");
 const std = @import("std");
 const gl = @import("zgl");
 
-fn framesize(width: i32, height: i32) void {
-    gl.viewport(0, 0, @intCast(width), @intCast(height));
+fn handle(_: ?*anyopaque, event: glfw.Handle.Event) void {
+    switch (event) {
+        .frame_buffer_size => |size| {
+            gl.viewport(0, 0, size.width, size.height);
+        },
+        else => {},
+    }
 }
 
 pub fn main() !void {
@@ -27,8 +32,13 @@ pub fn main() !void {
     window.makeContextCurrent();
     try gl.loadGL(glfw.getProcAddress);
 
-    window.enable_callback();
-    window.when.frame_buffer_size = &framesize;
+    window.handle(.{
+        .vptr = null,
+        .vtable = .{
+            .handle = &handle,
+        },
+    });
+
     gl.viewport(0, 0, 800, 600);
     while (!window.shouldClose()) {
         gl.clearColor(0.3, 0.4, 0.5, 1.0);

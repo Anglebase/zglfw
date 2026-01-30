@@ -6,6 +6,7 @@ pub const Monitor = @import("Monitor.zig");
 pub const input = @import("input.zig");
 pub const Image = @import("Image.zig");
 pub const Cursor = @import("Cursor.zig");
+pub const Handle = @import("Handle.zig");
 const Allocator = std.mem.Allocator;
 
 pub const Pos = struct { x: i32, y: i32 };

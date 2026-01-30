@@ -2,6 +2,24 @@ const glfw = @import("zglfw");
 const std = @import("std");
 const gl = @import("zgl");
 
+fn handle(_: ?*anyopaque, event: glfw.Handle.Event) void {
+    switch (event) {
+        .drop => |paths| {
+            for (paths) |path| {
+                std.debug.print("{s};", .{path});
+            }
+            std.debug.print("\n", .{});
+        },
+        .frame_buffer_size => |size| {
+            gl.viewport(0, 0, size.width, size.height);
+            std.debug.print("{any}\n", .{event});
+        },
+        else => {
+            std.debug.print("{any}\n", .{event});
+        },
+    }
+}
+
 pub fn main() !void {
     var allocator = std.heap.DebugAllocator(.{}){};
     defer _ = allocator.deinit();
@@ -23,8 +41,12 @@ pub fn main() !void {
     window.makeContextCurrent();
     try gl.loadGL(glfw.getProcAddress);
 
-    const cursor = try glfw.Cursor.createStandrad(.HAND);
-    window.setCursor(cursor);
+    window.handle(.{
+        .vptr = null,
+        .vtable = .{
+            .handle = &handle,
+        },
+    });
 
     gl.viewport(0, 0, 800, 600);
     while (!window.shouldClose()) {

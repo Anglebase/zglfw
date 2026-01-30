@@ -115,4 +115,26 @@ pub fn build(b: *std.Build) !void {
     const run_cursor = b.addRunArtifact(exe_cursor);
     step_cursor.dependOn(&run_cursor.step);
     run_cursor.step.dependOn(b.getInstallStep());
+    
+    // handle.zig
+    const exe_handle = b.addExecutable(.{
+        .name = "handle",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("bin/handle.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{
+                .{ .name = "zglfw", .module = zglfw.module("zglfw") },
+                .{ .name = "zgl", .module = zgl.module("zgl") },
+            },
+        }),
+    });
+    exe_handle.linkLibC();
+    exe_handle.linkLibrary(glfw_zig.artifact("glfw"));
+    b.installArtifact(exe_handle);
+
+    const step_handle = b.step("handle", "Run test file: handle.zig");
+    const run_handle = b.addRunArtifact(exe_handle);
+    step_handle.dependOn(&run_handle.step);
+    run_handle.step.dependOn(b.getInstallStep());
 }
