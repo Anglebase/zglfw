@@ -1,6 +1,7 @@
 const glfw = @import("glfw.zig");
 const std = @import("std");
 const Allocator = std.mem.Allocator;
+const input = @This();
 
 pub const Key = enum(c_int) {
     space = glfw.KEY_SPACE,
@@ -137,7 +138,7 @@ pub const Modify = packed struct {
 
 pub const Gamepad = struct {
     const State = struct {
-        buttons: [15]Action,
+        buttons: [15]input.State,
         axes: [6]f32,
     };
 
@@ -237,17 +238,17 @@ pub const Gamepad = struct {
         }
 
         /// **The caller owns the returned memory.**
-        pub fn getButton(self: Joystick, allocator: Allocator) ?[]const Action {
+        pub fn getButton(self: Joystick, allocator: Allocator) ?[]const input.State {
             var count: c_int = undefined;
-            const actions = glfw.getJoystickButtons(@intFromEnum(self), &count);
-            if (actions == null) {
+            const states = glfw.getJoystickButtons(@intFromEnum(self), &count);
+            if (states == null) {
                 @branchHint(.cold);
                 glfw.check() catch unreachable;
                 return null;
             }
-            const arr = try std.ArrayList(Action).initCapacity(allocator, @intCast(count));
+            const arr = try std.ArrayList(input.State).initCapacity(allocator, @intCast(count));
             for (0..count) |i| {
-                arr.append(allocator, @enumFromInt(actions[i]));
+                arr.append(allocator, @enumFromInt(states[i]));
             }
             return arr.toOwnedSlice(allocator);
         }
@@ -261,7 +262,7 @@ pub const Gamepad = struct {
                 glfw.check() catch unreachable;
                 return null;
             }
-            const arr = try std.ArrayList(Action).initCapacity(allocator, @intCast(count));
+            const arr = try std.ArrayList(input.State).initCapacity(allocator, @intCast(count));
             for (0..count) |i| {
                 arr.append(allocator, @bitCast(@as(u4, @intCast(hats[i]))));
             }
@@ -322,7 +323,7 @@ pub const Gamepad = struct {
             return name[0..std.mem.len(name)];
         }
 
-        pub fn getGamepadState(self: Joystick) ?State {
+        pub fn getGamepadState(self: Joystick) ?Gamepad.State {
             var glfw_state: glfw.GamepadState = undefined;
             const ret = glfw.getGamepadState(@intFromEnum(self), &glfw_state);
             if (ret == glfw.FALSE) {
@@ -330,7 +331,7 @@ pub const Gamepad = struct {
                 glfw.check() catch unreachable;
                 return null;
             }
-            var btns: [15]Action = undefined;
+            var btns: [15]input.State = undefined;
             inline for (0..15) |i| {
                 btns[i] = @enumFromInt(glfw_state[i]);
             }
@@ -423,6 +424,13 @@ pub fn getKeyScancode(key: Key) ?u32 {
 }
 
 pub const Action = enum(c_int) {
+    press = glfw.PRESS,
+    release = glfw.RELEASE,
+    repeat = glfw.REPEAT,
+};
+
+
+pub const State = enum(c_int) {
     press = glfw.PRESS,
     release = glfw.RELEASE,
 };
